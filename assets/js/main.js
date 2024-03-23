@@ -17,6 +17,16 @@ const setTodosToLocalStorage = (todos) => {
   displayTodos(todos);
 };
 
+const confirmActionDialog = (title) => {
+  Swal.fire({
+    position: "top-end",
+    icon: "success",
+    title,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
+
 const displayTodos = (todos) => {
   let renderedTodos = "";
   todos.forEach((todo, index) => {
@@ -80,7 +90,7 @@ const checkAddTodoInput = (e) => {
   }
 };
 
-const addTodo = (e) => {
+const addTodo = async (e) => {
   e.preventDefault();
   let todos = getTodosFromLocalStorage();
   const todo = {
@@ -89,8 +99,20 @@ const addTodo = (e) => {
     userId: 2,
     completed: false,
   };
+
   todos = [todo, ...todos];
   setTodosToLocalStorage(todos);
+
+  const res = await fetch("https://dummyjson.com/todos/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(todo),
+  });
+
+  if (res.status) {
+    confirmActionDialog("Your Todo has been Added");
+  }
+
   addTodoForm.reset();
   addTodoInput.classList.remove("is-valid");
 };
