@@ -77,8 +77,6 @@ const getTodos = async () => {
   }
 };
 
-getTodos();
-
 const checkTodoInput = (btn, input, errorMsg) => {
   if (todoPattern.test(input.value)) {
     if (input.classList.contains("is-invalid")) {
@@ -226,6 +224,8 @@ const editTodo = async (id, event) => {
     };
   }
 };
+
+getTodos();
 
 addTodoInput.addEventListener("keyup", () =>
   checkTodoInput(addTodoBtn, addTodoInput, addTodoErrorMsg)
