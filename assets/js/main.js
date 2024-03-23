@@ -1,23 +1,22 @@
 const addTodoForm = document.querySelector(".add-todo-form");
 const descriptionInput = document.querySelector("#todo-description");
 const addTodoBtn = document.querySelector(".add-todo-btn");
+const searchTodoInput = document.querySelector("#search-todo-input");
 const todosBody = document.querySelector("#todos-body");
 const totalTodosSpan = document.querySelector(".total-todos");
 const deletionModal = document.querySelector(".delete-modal");
 const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
 
 const getTodosFromLocalStorage = () => {
-  const todos = JSON.parse(localStorage.getItem("todos"));
-  return todos;
+  return JSON.parse(localStorage.getItem("todos"));
 };
 
 const setTodosToLocalStorage = (todos) => {
   localStorage.setItem("todos", JSON.stringify(todos));
-  displayTodos();
+  displayTodos(todos);
 };
 
-const displayTodos = () => {
-  const todos = getTodosFromLocalStorage();
+const displayTodos = (todos) => {
   let renderedTodos = "";
   todos.forEach((todo, index) => {
     renderedTodos += `<tr>
@@ -55,7 +54,7 @@ const getTodos = async () => {
     const { todos } = await res.json();
     setTodosToLocalStorage(todos);
   } else {
-    displayTodos();
+    displayTodos(getTodosFromLocalStorage());
   }
 };
 
@@ -73,6 +72,14 @@ const addTodo = (e) => {
   todos = [todo, ...todos];
   setTodosToLocalStorage(todos);
   addTodoForm.reset();
+};
+
+const searchForTodo = (e) => {
+  const todos = getTodosFromLocalStorage();
+  const filteredTodos = todos.filter((todo) =>
+    todo.todo.toLowerCase().startsWith(e.target.value.toLowerCase())
+  );
+  displayTodos(filteredTodos);
 };
 
 const showDeleteConfirmationModal = (id) => {
@@ -96,3 +103,4 @@ const completeTodo = (id) => {
 };
 
 addTodoBtn.addEventListener("click", addTodo);
+searchTodoInput.addEventListener("keyup", searchForTodo);

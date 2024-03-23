@@ -14,6 +14,10 @@ h1 {
   gap: 1rem;
 }
 
+#search-for-todo {
+  margin-block-start: 1rem;
+}
+
 .todos {
   margin-block-start: 5rem;
 }
