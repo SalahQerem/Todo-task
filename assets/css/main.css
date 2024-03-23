@@ -1,8 +1,27 @@
-:root {
-  --mainColor: #6366f1;
-  --deletionColor: #ef4444;
-}
+/* :root {
+
+} */
 
 h1 {
   text-align: center;
+  font-size: 3rem;
+}
+
+.todos {
+  margin-block-start: 5rem;
+}
+
+.todos-table {
+  width: 100%;
+}
+
+th,
+tr {
+  text-align: center;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
 }
