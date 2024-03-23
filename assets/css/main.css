@@ -50,6 +50,11 @@ tr {
   align-items: center;
 }
 
+.edit-btn {
+  width: 52px;
+  height: 40px;
+}
+
 .footer-info {
   width: fit-content;
   margin: auto;

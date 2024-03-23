@@ -32,11 +32,17 @@ const displayTodos = (todos) => {
   todos.forEach((todo, index) => {
     renderedTodos += `<tr>
         <th scope="row">${++index}</th>
-        <td>${todo.todo}</td>
+        <td class="todo-description-${todo.id}">${todo.todo}</td>
         <td>${todo.userId}</td>
         <td>${todo.completed ? "Completed" : "Pending"}</td>
         <td>
         <div class="btn-container">
+            <button
+                class="btn btn-primary fw-semibold edit-btn"
+                onclick="editTodo(${todo.id}, event)"
+            >
+                Edit
+            </button>
             <button
                 class="btn btn-danger fw-semibold delete-btn"
                 data-bs-toggle="modal"
@@ -100,17 +106,16 @@ const addTodo = async (e) => {
     completed: false,
   };
 
-  todos = [todo, ...todos];
-  setTodosToLocalStorage(todos);
-
   const res = await fetch("https://dummyjson.com/todos/add", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(todo),
   });
 
-  if (res.status) {
+  if (res.status === 200) {
     confirmActionDialog("Your Todo has been Added");
+    todos = [todo, ...todos];
+    setTodosToLocalStorage(todos);
   }
 
   addTodoForm.reset();
@@ -141,28 +146,74 @@ const deleteTodo = async (id) => {
 
   if (res.status === 200) {
     confirmActionDialog("Your Todo has been deleted");
+    setTodosToLocalStorage(filteredTodos);
   }
-  setTodosToLocalStorage(filteredTodos);
 };
 
 const completeTodo = async (id) => {
   let todos = getTodosFromLocalStorage();
+  let isComplete = false;
   todos.forEach((todo) => {
-    if (todo.id === id) todo.completed = true;
+    if (todo.id === id) {
+      if (todo.completed === true) {
+        confirmActionDialog("Your Todo already Completed");
+        isComplete = true;
+      } else {
+        todo.completed = true;
+      }
+    }
   });
 
-  const res = await fetch(`https://dummyjson.com/todos/${id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      completed: true,
-    }),
-  });
+  if (!isComplete) {
+    const res = await fetch(`https://dummyjson.com/todos/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        completed: true,
+      }),
+    });
 
-  if (res.status === 200) {
-    confirmActionDialog("Your Todo has been Changed to completed");
+    if (res.status === 200) {
+      confirmActionDialog("Your Todo has been changed to Completed");
+      setTodosToLocalStorage(todos);
+    }
   }
-  setTodosToLocalStorage(todos);
+};
+
+const editTodo = async (id, event) => {
+  const tododescriptionTD = document.querySelector(`.todo-description-${id}`);
+  const currentEditBtn = event.target;
+  if (tododescriptionTD.getAttribute("is-visited-for-edit")) {
+    const editTodoInput = document.querySelector("#todo-description-to-edit");
+    const res = await fetch(`https://dummyjson.com/todos/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        todo: editTodoInput.value,
+      }),
+    });
+
+    if (res.status === 200) {
+      confirmActionDialog("Your Todo has been Edited");
+      let todos = getTodosFromLocalStorage();
+      todos.forEach((todo) => {
+        if (todo.id === id) todo.todo = editTodoInput.value;
+      });
+      setTodosToLocalStorage(todos);
+    }
+    tododescriptionTD.removeAttribute("is-visited-for-edit");
+    currentEditBtn.innerHTML = `Edit`;
+  } else {
+    tododescriptionTD.setAttribute("is-visited-for-edit", "true");
+    const prevDescription = tododescriptionTD.innerHTML;
+    tododescriptionTD.innerHTML = `<input type="text" 
+                                    class="form-control" 
+                                    id="todo-description-to-edit" 
+                                    placeholder="Todo Description"
+                                    value=${prevDescription}
+                                />`;
+    currentEditBtn.innerHTML = `<i class="fa-solid fa-check fs-5"></i>`;
+  }
 };
 
 addTodoBtn.addEventListener("click", addTodo);
