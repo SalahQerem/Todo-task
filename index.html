@@ -19,13 +19,19 @@
       <div class="container">
         <form class="add-todo-form">
           <div class="input-container">
-            <input
-              type="text"
-              class="form-control"
-              id="todo-description"
-              placeholder="Todo Description"
-            />
-            <button class="add-todo-btn btn btn-primary">Add</button>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                class="form-control"
+                id="todo-description"
+                placeholder="Todo Description"
+              />
+              <p class="description-error-msg text-danger">
+                Task Description must be at least 10 char and start with
+                uppercase
+              </p>
+            </div>
+            <button class="add-todo-btn btn btn-primary" disabled>Add</button>
           </div>
         </form>
       </div>

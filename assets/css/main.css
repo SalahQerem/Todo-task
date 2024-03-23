@@ -11,7 +11,20 @@ h1 {
   width: 60%;
   margin: auto;
   display: flex;
+  align-items: flex-start;
   gap: 1rem;
+}
+
+.input-wrapper {
+  width: 100%;
+}
+
+#add-new-todo {
+  margin-block-start: 3rem;
+}
+
+.description-error-msg {
+  display: none;
 }
 
 #search-for-todo {

@@ -1,5 +1,6 @@
 const addTodoForm = document.querySelector(".add-todo-form");
-const descriptionInput = document.querySelector("#todo-description");
+const addTodoInput = document.querySelector("#todo-description");
+const descriptionErrorMsg = document.querySelector(".description-error-msg");
 const addTodoBtn = document.querySelector(".add-todo-btn");
 const searchTodoInput = document.querySelector("#search-todo-input");
 const todosBody = document.querySelector("#todos-body");
@@ -60,18 +61,38 @@ const getTodos = async () => {
 
 getTodos();
 
+const checkAddTodoInput = (e) => {
+  const pattern = /^[A-Z][a-z]{10,100}$/;
+  if (pattern.test(addTodoInput.value)) {
+    if (addTodoInput.classList.contains("is-invalid")) {
+      addTodoInput.classList.remove("is-invalid");
+    }
+    descriptionErrorMsg.style.cssText = "display:none;";
+    addTodoInput.classList.add("is-valid");
+    addTodoBtn.removeAttribute("disabled");
+  } else {
+    if (addTodoInput.classList.contains("is-valid")) {
+      addTodoInput.classList.remove("is-valid");
+    }
+    descriptionErrorMsg.style.cssText = "display:block;";
+    addTodoInput.classList.add("is-invalid");
+    addTodoBtn.setAttribute("disabled", "disabled");
+  }
+};
+
 const addTodo = (e) => {
   e.preventDefault();
   let todos = getTodosFromLocalStorage();
   const todo = {
     id: todos.length + 1,
-    todo: descriptionInput.value,
+    todo: addTodoInput.value,
     userId: 2,
     completed: false,
   };
   todos = [todo, ...todos];
   setTodosToLocalStorage(todos);
   addTodoForm.reset();
+  addTodoInput.classList.remove("is-valid");
 };
 
 const searchForTodo = (e) => {
@@ -104,3 +125,4 @@ const completeTodo = (id) => {
 
 addTodoBtn.addEventListener("click", addTodo);
 searchTodoInput.addEventListener("keyup", searchForTodo);
+addTodoInput.addEventListener("keyup", checkAddTodoInput);
