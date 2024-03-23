@@ -23,8 +23,10 @@ h1 {
   margin-block-start: 3rem;
 }
 
-.description-error-msg {
+.add-todo-error-msg,
+.edit-todo-error-msg {
   display: none;
+  margin-block: 0.3rem 0;
 }
 
 #search-for-todo {

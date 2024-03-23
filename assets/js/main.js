@@ -1,12 +1,14 @@
 const addTodoForm = document.querySelector(".add-todo-form");
-const addTodoInput = document.querySelector("#todo-description");
-const descriptionErrorMsg = document.querySelector(".description-error-msg");
+const addTodoInput = document.querySelector("#add-todo-description");
+const addTodoErrorMsg = document.querySelector(".add-todo-error-msg");
 const addTodoBtn = document.querySelector(".add-todo-btn");
 const searchTodoInput = document.querySelector("#search-todo-input");
 const todosBody = document.querySelector("#todos-body");
 const totalTodosSpan = document.querySelector(".total-todos");
 const deletionModal = document.querySelector(".delete-modal");
 const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
+
+const todoPattern = /^[A-Z][a-z]{10,100}$/;
 
 const getTodosFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem("todos"));
@@ -77,22 +79,21 @@ const getTodos = async () => {
 
 getTodos();
 
-const checkAddTodoInput = (e) => {
-  const pattern = /^[A-Z][a-z]{10,100}$/;
-  if (pattern.test(addTodoInput.value)) {
-    if (addTodoInput.classList.contains("is-invalid")) {
-      addTodoInput.classList.remove("is-invalid");
+const checkTodoInput = (btn, input, errorMsg) => {
+  if (todoPattern.test(input.value)) {
+    if (input.classList.contains("is-invalid")) {
+      input.classList.remove("is-invalid");
     }
-    descriptionErrorMsg.style.cssText = "display:none;";
-    addTodoInput.classList.add("is-valid");
-    addTodoBtn.removeAttribute("disabled");
+    errorMsg.style.cssText = "display:none;";
+    input.classList.add("is-valid");
+    btn.removeAttribute("disabled");
   } else {
-    if (addTodoInput.classList.contains("is-valid")) {
-      addTodoInput.classList.remove("is-valid");
+    if (input.classList.contains("is-valid")) {
+      input.classList.remove("is-valid");
     }
-    descriptionErrorMsg.style.cssText = "display:block;";
-    addTodoInput.classList.add("is-invalid");
-    addTodoBtn.setAttribute("disabled", "disabled");
+    errorMsg.style.cssText = "display:block;";
+    input.classList.add("is-invalid");
+    btn.setAttribute("disabled", "disabled");
   }
 };
 
@@ -184,7 +185,7 @@ const editTodo = async (id, event) => {
   const tododescriptionTD = document.querySelector(`.todo-description-${id}`);
   const currentEditBtn = event.target;
   if (tododescriptionTD.getAttribute("is-visited-for-edit")) {
-    const editTodoInput = document.querySelector("#todo-description-to-edit");
+    const editTodoInput = document.querySelector("#edit-todo-description");
     const res = await fetch(`https://dummyjson.com/todos/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -208,14 +209,27 @@ const editTodo = async (id, event) => {
     const prevDescription = tododescriptionTD.innerHTML;
     tododescriptionTD.innerHTML = `<input type="text" 
                                     class="form-control" 
-                                    id="todo-description-to-edit" 
+                                    id="edit-todo-description" 
                                     placeholder="Todo Description"
                                     value=${prevDescription}
-                                />`;
+                                />
+                                <p class="edit-todo-error-msg text-danger">
+                                    Task Description must be at least 10 char and start with
+                                    uppercase
+                                </p>`;
     currentEditBtn.innerHTML = `<i class="fa-solid fa-check fs-5"></i>`;
+    const editTodoInput = document.querySelector("#edit-todo-description");
+    const editTodoErrorMsg = document.querySelector(".edit-todo-error-msg");
+    const editTodoBtn = event.target;
+    editTodoInput.onkeyup = () => {
+      checkTodoInput(editTodoBtn, editTodoInput, editTodoErrorMsg);
+    };
   }
 };
 
+addTodoInput.addEventListener("keyup", () =>
+  checkTodoInput(addTodoBtn, addTodoInput, addTodoErrorMsg)
+);
+
 addTodoBtn.addEventListener("click", addTodo);
 searchTodoInput.addEventListener("keyup", searchForTodo);
-addTodoInput.addEventListener("keyup", checkAddTodoInput);
