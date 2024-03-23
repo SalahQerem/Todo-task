@@ -2,9 +2,13 @@ const addTodoForm = document.querySelector(".add-todo-form");
 const descriptionInput = document.querySelector("#todo-description");
 const addTodoBtn = document.querySelector(".add-todo-btn");
 const todosBody = document.querySelector("#todos-body");
+const totalTodosSpan = document.querySelector(".total-todos");
+const deletionModal = document.querySelector(".delete-modal");
+const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
 
 const getTodosFromLocalStorage = () => {
-  return JSON.parse(localStorage.getItem("todos"));
+  const todos = JSON.parse(localStorage.getItem("todos"));
+  return todos;
 };
 
 const setTodosToLocalStorage = (todos) => {
@@ -17,27 +21,36 @@ const displayTodos = () => {
   let renderedTodos = "";
   todos.forEach((todo, index) => {
     renderedTodos += `<tr>
-        <th scope="row">${index + 1}</th>
+        <th scope="row">${++index}</th>
         <td>${todo.todo}</td>
         <td>${todo.userId}</td>
         <td>${todo.completed ? "Completed" : "Pending"}</td>
         <td>
-            <div class="btn-container">
-                <button class="btn btn-danger fw-semibold delete-btn" onclick="deleteTodo(${
-                  todo.id
-                })">Delete</button>
-                <button class="btn btn-success fw-semibold confirm-btn" onclick="completeTodo(${
-                  todo.id
-                })">Done</button>
-            </div>
+        <div class="btn-container">
+            <button
+                class="btn btn-danger fw-semibold delete-btn"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                onclick="showDeleteConfirmationModal(${todo.id})"
+            >
+                Delete
+            </button>
+            <button
+                class="btn btn-success fw-semibold confirm-btn"
+                onclick="completeTodo(${todo.id})"
+            >
+                Done
+            </button>
+        </div>
         </td>
     </tr>`;
   });
   todosBody.innerHTML = renderedTodos;
+  totalTodosSpan.innerHTML = todos.length;
 };
 
 const getTodos = async () => {
-  if (!getTodosFromLocalStorage) {
+  if (!getTodosFromLocalStorage()) {
     const res = await fetch("https://dummyjson.com/todos");
     const { todos } = await res.json();
     setTodosToLocalStorage(todos);
@@ -60,6 +73,12 @@ const addTodo = (e) => {
   todos = [todo, ...todos];
   setTodosToLocalStorage(todos);
   addTodoForm.reset();
+};
+
+const showDeleteConfirmationModal = (id) => {
+  confirmDeleteBtn.onclick = () => {
+    deleteTodo(id);
+  };
 };
 
 const deleteTodo = (id) => {
