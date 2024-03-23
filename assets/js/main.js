@@ -23,7 +23,7 @@ const confirmActionDialog = (title) => {
     icon: "success",
     title,
     showConfirmButton: false,
-    timer: 1500,
+    timer: 2000,
   });
 };
 
@@ -131,17 +131,37 @@ const showDeleteConfirmationModal = (id) => {
   };
 };
 
-const deleteTodo = (id) => {
+const deleteTodo = async (id) => {
   let todos = getTodosFromLocalStorage();
   const filteredTodos = todos.filter((todo) => todo.id !== id);
+
+  const res = await fetch(`https://dummyjson.com/todos/${id}`, {
+    method: "DELETE",
+  });
+
+  if (res.status === 200) {
+    confirmActionDialog("Your Todo has been deleted");
+  }
   setTodosToLocalStorage(filteredTodos);
 };
 
-const completeTodo = (id) => {
+const completeTodo = async (id) => {
   let todos = getTodosFromLocalStorage();
   todos.forEach((todo) => {
     if (todo.id === id) todo.completed = true;
   });
+
+  const res = await fetch(`https://dummyjson.com/todos/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      completed: true,
+    }),
+  });
+
+  if (res.status === 200) {
+    confirmActionDialog("Your Todo has been Changed to completed");
+  }
   setTodosToLocalStorage(todos);
 };
 
