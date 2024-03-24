@@ -8,7 +8,7 @@ const totalTodosSpan = document.querySelector(".total-todos");
 const deletionModal = document.querySelector(".delete-modal");
 const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
 
-const todoPattern = /^[A-Z][a-z]{10,100}$/;
+const todoPattern = /^(?=[\s\S]{10,})[A-Za-z0-9_]+([-\s'.,:;?()A-Za-z0-9_]+)*$/;
 
 const getTodosFromLocalStorage = () => {
   return JSON.parse(localStorage.getItem("todos"));
