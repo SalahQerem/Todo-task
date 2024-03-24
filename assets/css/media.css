@@ -1,0 +1,7 @@
+@media (min-width: 1200px) {
+  .btn-container {
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 0;
+  }
+}
