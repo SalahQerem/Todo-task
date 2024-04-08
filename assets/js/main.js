@@ -16,7 +16,7 @@ const getTodosFromLocalStorage = () => {
 
 const setTodosToLocalStorage = (todos) => {
   localStorage.setItem("todos", JSON.stringify(todos));
-  displayTodos(todos);
+  renderTodos(todos);
 };
 
 const confirmActionDialog = (title) => {
@@ -29,7 +29,7 @@ const confirmActionDialog = (title) => {
   });
 };
 
-const displayTodos = (todos) => {
+const renderTodos = (todos) => {
   let renderedTodos = "";
   todos.forEach((todo, index) => {
     renderedTodos += `<tr>
@@ -73,7 +73,7 @@ const getTodos = async () => {
     const { todos } = await res.json();
     setTodosToLocalStorage(todos);
   } else {
-    displayTodos(getTodosFromLocalStorage());
+    renderTodos(getTodosFromLocalStorage());
   }
 };
 
@@ -126,7 +126,7 @@ const searchForTodo = (e) => {
   const filteredTodos = todos.filter((todo) =>
     todo.todo.toLowerCase().startsWith(e.target.value.toLowerCase())
   );
-  displayTodos(filteredTodos);
+  renderTodos(filteredTodos);
 };
 
 const showDeleteConfirmationModal = (id) => {
