@@ -10,7 +10,7 @@ const confirmDeleteBtn = document.querySelector("#confirm-delete-btn");
 
 const todoPattern = /^(?=[\s\S]{10,})[A-Za-z0-9_]+([-\s'.,:;?()A-Za-z0-9_]+)*$/;
 
-const getTodosFromLocalStorage = () => {
+const storedTodos = () => {
   return JSON.parse(localStorage.getItem("todos"));
 };
 
@@ -67,13 +67,13 @@ const renderTodos = (todos) => {
   totalTodosSpan.innerHTML = todos.length;
 };
 
-const getTodos = async () => {
-  if (!getTodosFromLocalStorage()) {
+const fetchTodos = async () => {
+  if (!storedTodos()) {
     const res = await fetch("https://dummyjson.com/todos");
     const { todos } = await res.json();
     setTodosToLocalStorage(todos);
   } else {
-    renderTodos(getTodosFromLocalStorage());
+    renderTodos(storedTodos());
   }
 };
 
@@ -97,7 +97,7 @@ const checkTodoInput = (btn, input, errorMsg) => {
 
 const addTodo = async (e) => {
   e.preventDefault();
-  let todos = getTodosFromLocalStorage();
+  let todos = storedTodos();
   const todo = {
     id: todos.length + 1,
     todo: addTodoInput.value,
@@ -122,7 +122,7 @@ const addTodo = async (e) => {
 };
 
 const searchForTodo = (e) => {
-  const todos = getTodosFromLocalStorage();
+  const todos = storedTodos();
   const filteredTodos = todos.filter((todo) =>
     todo.todo.toLowerCase().startsWith(e.target.value.toLowerCase())
   );
@@ -136,7 +136,7 @@ const showDeleteConfirmationModal = (id) => {
 };
 
 const deleteTodo = async (id) => {
-  let todos = getTodosFromLocalStorage();
+  let todos = storedTodos();
   const filteredTodos = todos.filter((todo) => todo.id !== id);
 
   const res = await fetch(`https://dummyjson.com/todos/${id}`, {
@@ -150,7 +150,7 @@ const deleteTodo = async (id) => {
 };
 
 const completeTodo = async (id) => {
-  let todos = getTodosFromLocalStorage();
+  let todos = storedTodos();
   let isComplete = false;
   todos.forEach((todo) => {
     if (todo.id === id) {
@@ -194,7 +194,7 @@ const editTodo = async (id, event) => {
 
     if (res.status === 200) {
       confirmActionDialog("Your Todo has been Edited");
-      let todos = getTodosFromLocalStorage();
+      let todos = storedTodos();
       todos.forEach((todo) => {
         if (todo.id === id) todo.todo = editTodoInput.value;
       });
@@ -225,7 +225,7 @@ const editTodo = async (id, event) => {
   }
 };
 
-getTodos();
+fetchTodos();
 
 addTodoInput.addEventListener("keyup", () =>
   checkTodoInput(addTodoBtn, addTodoInput, addTodoErrorMsg)
