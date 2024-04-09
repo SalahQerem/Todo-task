@@ -17,6 +17,6 @@ In this project, I've used the following libraries:
 Please refer to the documentation of each library for more information on how to use them.
 
 ## Live Preview
-<h4 align="left">Live Preview is available in the https://salahqerem.github.io/todo-task/</h4>
+<h4 align="left">Live Preview is available at https://salahqerem.github.io/todo-task/</h4>
 
 <img src="./assets/readme images/home-page.png" alt="home page"/>
